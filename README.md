@@ -27,6 +27,10 @@ These instructions will install the development environment into your local mach
 	```
 
 ### Build 
+
+```
+$ pip install -r requirements.txt
+```
   
 ## Usage
   
