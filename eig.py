@@ -1,5 +1,7 @@
 import numpy as np
 
+ITERATION_PRECISION = 10 ** -5
+
 # Modified gram schmidt as described here:
 # https://www.inf.ethz.ch/personal/gander/papers/qrneu.pdf
 def gram_schmidt(A):
@@ -26,28 +28,38 @@ def gram_schmidt(A):
     return q, r
 
 # Given a square matrix and an eigenvalue, it uses inverse iteration to calculate the corresponding eigenvector
-def inverse_iteration(matrix, eigenvalue):
+def inverse_iteration(matrix, eigen_value):
      n = len(matrix)
-     I = np.identity(n)
-     eigenvector = np.random.rand(n, 1)
-     inv = np.linalg.inv(matrix - eigenvalue * I)
-     for i in range(100):   # TODO: buscar una cota
-         aux = np.dot(inv, eigenvector)
-         aux = aux/np.linalg.norm(aux)
-         eigenvector = aux
+     bk = np.random.rand(n, 1)
+     inv = np.linalg.inv(matrix - eigen_value * np.identity(n))
+     for i in range(100):
+         bk1 = calculate_next_iteration(inv, bk)
+         if np.linalg.norm(np.subtract(bk,bk1)) < ITERATION_PRECISION:
+             break
+         bk = bk1
 
-     return eigenvector
+     return bk
+
+def calculate_next_iteration(inv, eigen_vector):
+    dividend = np.dot(inv, eigen_vector)
+    divisor = np.linalg.norm(dividend)
+    return dividend / divisor
 
 # Given a diagonalizable matrix, it returns a list with its eigenvalues in descending absolute value
 def sorted_eigen_values(A):
     n = len(A)
     Q, R = householder_QR(A)
     matrix = np.copy(A)
-    for k in range(100):    # TODO: buscar una cota
+    eigen_values = np.diagonal(matrix)
+    for k in range(100):
         Q, R = householder_QR(matrix)
         matrix = R.dot(Q)
+        new_eigen_values = np.diagonal(matrix)
+        if np.linalg.norm(np.subtract(new_eigen_values,eigen_values)) < ITERATION_PRECISION:
+            break
+        eigen_values = new_eigen_values
 
-    return sorted(np.diagonal(matrix), key=abs)[::-1]
+    return sorted(eigen_values, key=abs)[::-1]
 
 # Given a diagonalizable matrix, it returns a list with its eigenvalues in descending absolute value and a matrix with the corresponing eigenvectors
 def eigen_values_and_vectors(A):
