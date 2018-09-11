@@ -7,7 +7,7 @@ These instructions will install the development environment into your local mach
 ### Prerequisites
 1. Clone the repository
 	```
-	$ git clone https://github.com/juanmbellini/face_shazam.git
+	$ git clone https://github.com/lobo/mna-tp1.git
 	```
 2. Install Python and pip
 	#### MacOS
