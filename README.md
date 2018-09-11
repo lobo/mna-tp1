@@ -26,11 +26,11 @@ These instructions will install the development environment into your local mach
 	$ sudo apt-get install python python-pip
 	```
 
-  ### Build 
+### Build 
   
-  ## Usage
+## Usage
   
-  ## Authors
+## Authors
 * [Axel Fratoni](https://github.com/axelfratoni)
 * [Daniel Lobo](https://github.com/lobo)
 * [Fernán Oviedo](https://github.com/foviedoITBA)
