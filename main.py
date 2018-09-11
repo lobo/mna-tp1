@@ -7,11 +7,12 @@ import numpy as np
 import image
 import eig
 from sklearn import svm
+import video
 
-USED_EIGEN_FACES = 10
+USED_EIGEN_FACES = 20
 
 parser = argparse.ArgumentParser()
-parser.add_argument("directory", help="Complete path with sub-directories which contain images.")
+parser.add_argument("directory", help="Complete path with sub-directories containing images")
 args = parser.parse_args()
 
 print("Loading images...")
@@ -77,6 +78,8 @@ projected_images = np.dot(grayscaled_images, eigen_faces.transpose())
 # Classify
 print("Classifying...")
 classifier = svm.LinearSVC()
-image_classes = [category for category in categories for _ in range(USED_EIGEN_FACES)]
+image_classes = [category for category in categories for _ in range(image.IMAGES_PER_DIRECTORY)]
 classifier.fit(projected_images, image_classes)
 
+# Predict
+video.recognize_faces(mean_face, eigen_faces, classifier)
