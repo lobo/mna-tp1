@@ -24,4 +24,4 @@ def load_images(directory):
     return np.asarray(grayscale_images[0]), subdirectories
 
 def to_grayscale(image_path):
-    return list(Image.open(image_path).convert('L').tobytes())
+    return np.asarray(list(Image.open(image_path).convert('L').tobytes()))
