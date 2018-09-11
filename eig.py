@@ -1,3 +1,5 @@
+import numpy as np
+
 # Modified gram schmidt as described here:
 # https://www.inf.ethz.ch/personal/gander/papers/qrneu.pdf
 def gram_schmidt(A):
@@ -29,31 +31,34 @@ def inverse_iteration(matrix, eigenvalue):
      I = np.identity(n)
      eigenvector = np.random.rand(n, 1)
      inv = np.linalg.inv(matrix - eigenvalue * I)
-     for i in range(100):
+     for i in range(100):   # TODO: buscar una cota
          aux = np.dot(inv, eigenvector)
          aux = aux/np.linalg.norm(aux)
          eigenvector = aux
 
      return eigenvector
 
-# Given a diagonalizable matrix, it returns a list with its eigenvalues in descending absolute value and a matrix with the corresponing eigenvectors
-def eigen_values_and_vectors(A):
+# Given a diagonalizable matrix, it returns a list with its eigenvalues in descending absolute value
+def sorted_eigen_values(A):
     n = len(A)
     Q, R = householder_QR(A)
     matrix = np.copy(A)
-    for k in range(10000):
+    for k in range(100):    # TODO: buscar una cota
         Q, R = householder_QR(matrix)
         matrix = R.dot(Q)
 
+    return sorted(np.diagonal(matrix), key=abs)[::-1]
+
+# Given a diagonalizable matrix, it returns a list with its eigenvalues in descending absolute value and a matrix with the corresponing eigenvectors
+def eigen_values_and_vectors(A):
+    n = len(A)
     eigen_vectors = np.zeros([n, n])
-    eigen_values = sorted(np.diagonal(matrix), key=abs)[::-1]
+    eigen_values = sorted_eigen_values(A)
     for i in range(len(eigen_values)):
        eigen_vector = inverse_iteration(A, eigen_values[i])
        for j in range(n):
            eigen_vectors[j][i] = eigen_vector[j]
     return eigen_values, eigen_vectors
-
-
 
 # Householder QR method as described here:
 # https://www.cs.cornell.edu/~bindel/class/cs6210-f09/lec18.pdf
@@ -80,7 +85,7 @@ def schur_decomposition(A):
     """docstring for schurDecomposition"""
     matrix = np.copy(A)
     U = np.identity(len(A))
-    for k in range(1000):
+    for k in range(100):
         Q, R = householder_QR(matrix)
         matrix = R.dot(Q)
         U = U.dot(Q)
