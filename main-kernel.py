@@ -7,7 +7,7 @@ import numpy as np
 import image
 import eig
 from sklearn import svm
-import video
+import video_kernel
 
 CAPTURED_VARIANCE = 0.9
 
@@ -64,3 +64,5 @@ classifier = svm.LinearSVC()
 image_classes = [category for category in categories for _ in range(image.IMAGES_PER_DIRECTORY)]
 classifier.fit(projected_images, image_classes)
 
+# Predict
+video_kernel.recognize_faces(K, pseudo_eigen_faces, grayscaled_images, classifier)
