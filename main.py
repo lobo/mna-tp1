@@ -7,11 +7,12 @@ import numpy as np
 import image
 import eig
 from sklearn import svm
+import video
 
-USED_EIGEN_FACES = 10
+CAPTURED_VARIANCE = 0.9
 
 parser = argparse.ArgumentParser()
-parser.add_argument("directory", help="Complete path with sub-directories which contain images.")
+parser.add_argument("directory", help="Complete path with sub-directories containing images")
 args = parser.parse_args()
 
 print("Loading images...")
@@ -42,9 +43,17 @@ left_covariance_matrix = grayscaled_images.dot(grayscaled_images.transpose())
 
 print("Computing eigenvalues...")
 eigen_values = eig.sorted_eigen_values(left_covariance_matrix)
+total_eigen_values_sum = sum(eigen_values)
+partial_eigen_value_sum = 0
+used_eigen_faces = 0
+for ev in eigen_values:
+	partial_eigen_value_sum += ev
+	used_eigen_faces += 1
+	if (partial_eigen_value_sum/total_eigen_values_sum > CAPTURED_VARIANCE):
+		break
+
 first_left_singular_vector = eig.inverse_iteration(left_covariance_matrix, eigen_values[0])
 eigen_face = grayscaled_images.transpose().dot(first_left_singular_vector)/np.sqrt(eigen_values[0])
-
 # First eigenface according to us
 #eigen1 = (np.reshape(eigen_face,[image.VERTICAL_SIZE, image.HORIZONTAL_SIZE]))*image.NORMALIZE_FACTOR
 #fig, axes = plt.subplots(1,1)
@@ -62,8 +71,8 @@ eigen_face = grayscaled_images.transpose().dot(first_left_singular_vector)/np.sq
 
 # Compute the first eigenfaces
 eigen_faces = list()
-print("Computing eigenfaces...")
-for i in range(USED_EIGEN_FACES):
+print("Computing " + str(used_eigen_faces) + " eigenfaces...")
+for i in range(used_eigen_faces):
 	left_singular_vector = eig.inverse_iteration(left_covariance_matrix, eigen_values[i])
 	eigen_face = grayscaled_images.transpose().dot(left_singular_vector)/np.sqrt(eigen_values[0])
 	eigen_face = [item for sublist in eigen_face for item in sublist]	# The above computation yields the eigenface as a list of one-dimentional lists, so we flatten it
@@ -77,6 +86,8 @@ projected_images = np.dot(grayscaled_images, eigen_faces.transpose())
 # Classify
 print("Classifying...")
 classifier = svm.LinearSVC()
-image_classes = [category for category in categories for _ in range(USED_EIGEN_FACES)]
+image_classes = [category for category in categories for _ in range(image.IMAGES_PER_DIRECTORY)]
 classifier.fit(projected_images, image_classes)
 
+# Predict
+video.recognize_faces(mean_face, eigen_faces, classifier)
