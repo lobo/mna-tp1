@@ -11,10 +11,13 @@ TEXT_COLOR = FRAME_COLOR
 TEXT_ELEVATION = 16
 TEXT_THICKNESS = 2
 
-def recognize_faces(mean_face, eigen_faces, classifier):
+def recognize_faces(K, pseudo_eigen_faces, images, classifier):
 	faceCascade = cv2.CascadeClassifier(HAAR_CASCADE_FRONTAL_FACE_PATH)
 	video_capture = cv2.VideoCapture(0)
-	
+	m = len(K)
+	inverse_m_matrix = np.ones((m,m))/m
+	inverse_m_vector = np.ones((1,m))/m
+
 	while(True):
 		# Capture frame
 	    ret, frame = video_capture.read()
@@ -30,9 +33,12 @@ def recognize_faces(mean_face, eigen_faces, classifier):
 	        captured_image = fd.resizeImg(captured_image)
 	        captured_image = captured_image.convert('L')	# 'L' stands for grayscale mode
 	        captured_image = np.array(captured_image).ravel()
-	        captured_image = (np.array(captured_image) / image.NORMALIZE_FACTOR) - mean_face
-	        captured_image = np.dot(np.array(captured_image), eigen_faces.transpose())
-	        name = classifier.predict([captured_image])
+	        captured_image = (np.array(captured_image) - image.NORMALIZE_FACTOR / 2) / (image.NORMALIZE_FACTOR / 2)
+	        captured_image_K = np.dot(captured_image, images.transpose()) ** 2
+        	captured_image_K = captured_image_K - np.dot(inverse_m_vector, K) - np.dot(captured_image_K, inverse_m_matrix) + np.dot(inverse_m_vector, np.dot(K, inverse_m_matrix))
+	        captured_image_K = captured_image_K[0]
+	        projected_image = pseudo_eigen_faces.dot(captured_image_K.transpose()).transpose()
+	        name = classifier.predict([projected_image])
 	        cv2.putText(frame, name[0], (x, y - TEXT_ELEVATION), fontFace=TEXT_FONT, fontScale=1, color=TEXT_COLOR, thickness=TEXT_THICKNESS)
 
 	    # Display the complete frame

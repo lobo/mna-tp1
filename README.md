@@ -9,11 +9,11 @@ These instructions will install the development environment into your local mach
 	```
 	$ git clone https://github.com/lobo/mna-tp1.git
 	```
-2. Install Python and pip
+2. Install Python3 and pip3
 	#### MacOS
 	A. Install packages
 	```
-	$ brew install python
+	$ brew install python3
 	```
 	B. Update the ```PATH``` variable to use the Homebrew's python packages
 	```
@@ -23,16 +23,37 @@ These instructions will install the development environment into your local mach
 	```  
 	#### Ubuntu
 	```
-	$ sudo apt-get install python python-pip
+	$ sudo apt-get install python3.6 python3-pip
 	```
 
 ### Build 
 
+On the root directory run the following command.
+
 ```
-$ pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 ```
   
 ## Usage
+
+On the root directory run the following command. 
+
+```
+$ python3 main.py ./att_faces
+```
+
+Doing so will execute the following: 
+
+1. Load images.
+2. Substract the mean face.
+3. Compute eigenvalues.
+4. Compute eigenfaces.
+5. Project images.
+6. Classify them.
+7. Turn camera of your computer on.
+8. Track faces it finds.
+9. Compare them to "familiar faces". These are the ones located in our "faces database".
+
   
 ## Authors
 * [Axel Fratoni](https://github.com/axelfratoni)
