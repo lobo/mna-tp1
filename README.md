@@ -28,6 +28,8 @@ These instructions will install the development environment into your local mach
 
 ### Build 
 
+On the root directory run the following command.
+
 ```
 $ pip3 install -r requirements.txt
 ```
