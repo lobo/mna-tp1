@@ -19,7 +19,6 @@ These instructions will install the development environment into your local mach
 	```
 	$ echo 'export PATH="/usr/local/opt/python/libexec/bin:$PATH" # Use Homebrew python' >> ~/.bash_profile
 	$ source ~/.bash_profile
-	
 	```  
 	#### Ubuntu
 	```
