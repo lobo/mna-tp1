@@ -35,7 +35,30 @@ $ pip3 install -r requirements.txt
   
 ## Usage
 
-On the root directory run the following command. 
+There are 3 executables on the root directory. 
+
+### PCA data
+
+On the root directory run the following command:
+
+```
+$ python3 facespca.py 
+```
+Doing so will generate PCA data.
+
+### KPCA data
+
+On the root directory run the following command:
+
+```
+$ python3 faceskernelpca.py 
+```
+
+Doing so will generate PCA data.
+
+### Main program
+
+On the root directory run the following command:
 
 ```
 $ python3 main.py ./att_faces
